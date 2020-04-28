@@ -46,11 +46,7 @@ train_y = np.load("train_y.npy")
 print("Size of training data = {}".format(len(train_x)))
 val_x = np.load("val_x.npy")
 val_y = np.load("val_y.npy")
-batch_size = 128#128
-train_set = ImgDataset(train_x, train_y, train_transform)
-val_set = ImgDataset(val_x, val_y, test_transform)
-train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
-val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False)
+
 #分別將 training set、validation set、testing set 用 readfile 函式讀進來
 '''
 workspace_dir = sys.argv[1]
@@ -106,10 +102,10 @@ class ImgDataset(Dataset):
             return X
 
 batch_size = 128#128
-
-
-
-
+train_set = ImgDataset(train_x, train_y, train_transform)
+val_set = ImgDataset(val_x, val_y, test_transform)
+train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
+val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False)
 
 """# Model"""
 
