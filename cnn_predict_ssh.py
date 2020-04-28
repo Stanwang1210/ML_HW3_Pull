@@ -170,9 +170,10 @@ class Classifier(nn.Module):
             # nn.Dropout(0.2),
             # nn.LeakyReLU(0.03),
             # nn.Linear(128, 11)
-            nn.Linear(512,128), #nn.linear(dim of input, dim of output)
+            nn.Linear(512,256), #nn.linear(dim of input, dim of output)
             nn.LeakyReLU(0.03),
-     
+            nn.Linear(256,128),
+            nn.ReLU(),
             nn.Dropout(0.2),
             nn.Linear(128, 11)
         )
