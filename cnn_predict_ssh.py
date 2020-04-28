@@ -184,12 +184,12 @@ class Classifier(nn.Module):
         out = out.view(out.size()[0], -1)
         return self.fc(out)
 
-'''
+
 train_val_x = np.concatenate((train_x, val_x), axis=0)
 train_val_y = np.concatenate((train_y, val_y), axis=0)
 train_val_set = ImgDataset(train_val_x, train_val_y, train_transform)
-train_val_loader = DataLoader(train_val_set, batch_size=batch_size, shuffle=True)
-'''
+#train_val_loader = DataLoader(train_val_set, batch_size=batch_size, shuffle=True)
+
 train_val_loader = torch.load('train_val_loader.pth')
 # Train
 model_best = Classifier().cuda()
@@ -222,7 +222,7 @@ for epoch in range(num_epoch):
 
 print("Saving model...")
 torch.save(model_best.state_dict(), "model_best.pt")
-print("model_params/model_gen.pt saved")
+print("model_best.pt saved")
 model_best = Classifier().cuda()
 print("Loading model...")
 model_best.load_state_dict(torch.load(MODLE_PATH))
