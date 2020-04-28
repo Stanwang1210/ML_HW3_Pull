@@ -7,23 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/1c1N7jjIJuamySLG_iobRHdRLmwn-s1Ww
 """
 
-from google.colab import drive
-
-drive.mount('/content/drive')
-
-ls
-
-cd 'drive'
-
-ls
-
-cd 'My Drive'
-
-ls
-
-cd 'HW3 Data'
-
-ls
 
 # Import需要的套件
 from torchsummary import summary
