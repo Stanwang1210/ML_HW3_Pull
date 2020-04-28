@@ -40,6 +40,17 @@ def readfile(path, label):
     else:
       return x
 
+print("Reading data")
+train_x = np.load("train_x.npy")
+train_y = np.load("train_y.npy")
+print("Size of training data = {}".format(len(train_x)))
+val_x = np.load("val_x.npy")
+val_y = np.load("val_y.npy")
+batch_size = 128#128
+train_set = ImgDataset(train_x, train_y, train_transform)
+val_set = ImgDataset(val_x, val_y, test_transform)
+train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
+val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False)
 #分別將 training set、validation set、testing set 用 readfile 函式讀進來
 '''
 workspace_dir = sys.argv[1]
@@ -49,6 +60,7 @@ print("Reading data")
 test_x = readfile(os.path.join(workspace_dir, "testing"), False)
 print("Size of Testing data = {}".format(len(test_x)))
 '''
+
 MODLE_PATH = 'model_best.pt'
 test_x = np.load('test_x.npy')
 
@@ -181,7 +193,42 @@ class Classifier(nn.Module):
         return self.fc(out)
 
 
+train_val_x = np.concatenate((train_x, val_x), axis=0)
+train_val_y = np.concatenate((train_y, val_y), axis=0)
+train_val_set = ImgDataset(train_val_x, train_val_y, train_transform)
+train_val_loader = DataLoader(train_val_set, batch_size=batch_size, shuffle=True)
+# Train
+model_best = Classifier().cuda()
+loss = nn.CrossEntropyLoss() # 因為是 classification task，所以 loss 使用 CrossEntropyLoss
+optimizer = torch.optim.Adam(model_best.parameters(), lr=0.001,weight_decay=0.0005) # optimizer 使用 Adam
+num_epoch = 100
 
+for epoch in range(num_epoch):
+    epoch_start_time = time.time()
+    train_acc = 0.0
+    train_loss = 0.0
+
+    model_best.train()
+    for i, data in enumerate(train_val_loader):
+        optimizer.zero_grad()
+        train_pred = model_best(data[0].cuda())
+        batch_loss = loss(train_pred, data[1].cuda())
+        batch_loss.backward()
+        optimizer.step()
+
+        train_acc += np.sum(np.argmax(train_pred.cpu().data.numpy(), axis=1) == data[1].numpy())
+        train_loss += batch_loss.item()
+
+        #將結果 print 出來
+    print('[%03d/%03d] %2.2f sec(s) Train Acc: %3.6f Loss: %3.6f' % \
+      (epoch + 1, num_epoch, time.time()-epoch_start_time, \
+      train_acc/train_val_set.__len__(), train_loss/train_val_set.__len__()))
+
+
+
+print("Saving model...")
+torch.save(model_best.state_dict(), "model_best.pt")
+print("model_params/model_gen.pt saved")
 model_best = Classifier().cuda()
 print("Loading model...")
 model_best.load_state_dict(torch.load(MODLE_PATH))
