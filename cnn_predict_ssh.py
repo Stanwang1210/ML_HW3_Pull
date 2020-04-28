@@ -184,11 +184,13 @@ class Classifier(nn.Module):
         out = out.view(out.size()[0], -1)
         return self.fc(out)
 
-
+'''
 train_val_x = np.concatenate((train_x, val_x), axis=0)
 train_val_y = np.concatenate((train_y, val_y), axis=0)
 train_val_set = ImgDataset(train_val_x, train_val_y, train_transform)
 train_val_loader = DataLoader(train_val_set, batch_size=batch_size, shuffle=True)
+'''
+train_val_loader = np.load('train_val_loader.pth')
 # Train
 model_best = Classifier().cuda()
 loss = nn.CrossEntropyLoss() # 因為是 classification task，所以 loss 使用 CrossEntropyLoss
@@ -230,8 +232,9 @@ print("Model(" + MODLE_PATH+ ") loaded")
 利用剛剛 train 好的 model 進行 prediction
 """
 
-test_set = ImgDataset(test_x, transform=test_transform)
-test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False)
+#test_set = ImgDataset(test_x, transform=test_transform)
+#test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False)
+test_loader = np.load('test_loader.pth')
 
 model_best.eval()
 prediction = []
@@ -250,8 +253,3 @@ with open(sys.argv[2], 'w') as f:
 print("Prediction Done")
 print(sys.argv[2] + " saved")
 
-
-
-from google.colab import files
-
-files.download(sys.argv[2])
