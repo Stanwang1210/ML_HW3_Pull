@@ -190,7 +190,7 @@ train_val_y = np.concatenate((train_y, val_y), axis=0)
 train_val_set = ImgDataset(train_val_x, train_val_y, train_transform)
 train_val_loader = DataLoader(train_val_set, batch_size=batch_size, shuffle=True)
 '''
-train_val_loader = np.load('train_val_loader.pth')
+train_val_loader = torch.load('train_val_loader.pth')
 # Train
 model_best = Classifier().cuda()
 loss = nn.CrossEntropyLoss() # 因為是 classification task，所以 loss 使用 CrossEntropyLoss
@@ -234,7 +234,7 @@ print("Model(" + MODLE_PATH+ ") loaded")
 
 #test_set = ImgDataset(test_x, transform=test_transform)
 #test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False)
-test_loader = np.load('test_loader.pth')
+test_loader = torch.load('test_loader.pth')
 
 model_best.eval()
 prediction = []
