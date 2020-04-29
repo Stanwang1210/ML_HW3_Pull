@@ -60,13 +60,12 @@ class Classifier_no_norm(nn.Module):
             nn.Dropout(0.3),
         )
         self.fc = nn.Sequential(
-            nn.Linear(512*4*4, 1024),
+            nn.Linear(512,256), #nn.linear(dim of input, dim of output)
             nn.ReLU(),
-            nn.Dropout(0.3),
-            nn.Linear(1024, 512),
+            nn.Linear(256,128),
             nn.ReLU(),
-            nn.Dropout(0.3),
-            nn.Linear(512, 11)
+            nn.Dropout(0.2),
+            nn.Linear(128, 11)
         )
 
     def forward(self, x):
@@ -132,12 +131,11 @@ class Classifier_norm(nn.Module):
             # nn.Linear(1024, 512),
             # #nn.Dropout(0.1),
             # nn.LeakyReLU(0.03),
-            nn.Linear(512, 256),
+            nn.Linear(512,256), #nn.linear(dim of input, dim of output)
+            nn.ReLU(),
+            nn.Linear(256,128),
+            nn.ReLU(),
             nn.Dropout(0.2),
-            nn.LeakyReLU(0.03),
-            nn.Linear(256, 128),
-            nn.Dropout(0.2),
-            nn.LeakyReLU(0.03),
             nn.Linear(128, 11)
         )
 
