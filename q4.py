@@ -73,7 +73,7 @@ train_paths, train_labels = get_paths_labels(os.path.join(args.dataset_dir, 'tra
 cnn_layer = 15
 filter_pos = 59
 
-im_path = 'input_images/test.jpeg'
+im_path = 'food-11/training/0_177.jpg'
 # Fully connected layer is not needed
 pretrained_model = model
 dd = DeepDream(pretrained_model, cnn_layer, filter_pos, im_path)
