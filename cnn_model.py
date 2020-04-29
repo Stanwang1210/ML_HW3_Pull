@@ -24,42 +24,69 @@ print("std loaded")
 
 class Classifier_no_norm(nn.Module):
     def __init__(self):
-        super(Classifier_no_norm, self).__init__()
+        super(Classifier, self).__init__()
         #torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding)
         #torch.nn.MaxPool2d(kernel_size, stride, padding)
         #input 維度 [3, 128, 128]
         self.cnn = nn.Sequential(
             nn.Conv2d(3, 64, 3, 1, 1),  # [64, 128, 128]
             nn.BatchNorm2d(64),
-            nn.ReLU(),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),      # [64, 64, 64]
-            nn.Dropout(0.3),
+            nn.Dropout(0.2),
 
             nn.Conv2d(64, 128, 3, 1, 1), # [128, 64, 64]
             nn.BatchNorm2d(128),
-            nn.ReLU(),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),      # [128, 32, 32]
-            nn.Dropout(0.3),
+            nn.Dropout(0.2),
 
             nn.Conv2d(128, 256, 3, 1, 1), # [256, 32, 32]
             nn.BatchNorm2d(256),
-            nn.ReLU(),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),      # [256, 16, 16]
-            nn.Dropout(0.3),
+            nn.Dropout(0.2),
 
             nn.Conv2d(256, 512, 3, 1, 1), # [512, 16, 16]
             nn.BatchNorm2d(512),
-            nn.ReLU(),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),       # [512, 8, 8]
-            nn.Dropout(0.3),
+            nn.Dropout(0.2),
             
             nn.Conv2d(512, 512, 3, 1, 1), # [512, 8, 8]
             nn.BatchNorm2d(512),
-            nn.ReLU(),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),       # [512, 4, 4]
-            nn.Dropout(0.3),
+            nn.Dropout(0.2),
+
+            nn.Conv2d(512, 512, 3, 1, 1), # [512, 4, 4]
+            nn.BatchNorm2d(512),
+            nn.LeakyReLU(0.04),
+            nn.MaxPool2d(2, 2, 0),       # [512, 2, 2]
+            nn.Dropout(0.2),
+
+            nn.Conv2d(512, 512, 3, 1, 1), # [512, 4, 4]
+            nn.BatchNorm2d(512),
+            nn.LeakyReLU(0.04),
+            nn.MaxPool2d(2, 2, 0),       # [512, 1, 1]
+            nn.Dropout(0.2),
+
+            
         )
         self.fc = nn.Sequential(
+            # nn.Linear(512, 1024),
+            # #nn.Dropout(0.1),
+            # nn.LeakyReLU(0.03),
+            # nn.Linear(1024, 512),
+            # #nn.Dropout(0.1),
+            # nn.LeakyReLU(0.03),
+            # nn.Linear(512, 256),
+            # nn.Dropout(0.2),
+            # nn.LeakyReLU(0.03),
+            # nn.Linear(256, 128),
+            # nn.Dropout(0.2),
+            # nn.LeakyReLU(0.03),
+            # nn.Linear(128, 11)
             nn.Linear(512,256), #nn.linear(dim of input, dim of output)
             nn.ReLU(),
             nn.Linear(256,128),
@@ -75,50 +102,50 @@ class Classifier_no_norm(nn.Module):
 
 class Classifier_norm(nn.Module):
     def __init__(self):
-        super(Classifier_norm, self).__init__()
+        super(Classifier, self).__init__()
         #torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding)
         #torch.nn.MaxPool2d(kernel_size, stride, padding)
         #input 維度 [3, 128, 128]
         self.cnn = nn.Sequential(
             nn.Conv2d(3, 64, 3, 1, 1),  # [64, 128, 128]
             nn.BatchNorm2d(64),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),      # [64, 64, 64]
             nn.Dropout(0.2),
 
             nn.Conv2d(64, 128, 3, 1, 1), # [128, 64, 64]
             nn.BatchNorm2d(128),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),      # [128, 32, 32]
             nn.Dropout(0.2),
 
             nn.Conv2d(128, 256, 3, 1, 1), # [256, 32, 32]
             nn.BatchNorm2d(256),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),      # [256, 16, 16]
             nn.Dropout(0.2),
 
             nn.Conv2d(256, 512, 3, 1, 1), # [512, 16, 16]
             nn.BatchNorm2d(512),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),       # [512, 8, 8]
             nn.Dropout(0.2),
             
             nn.Conv2d(512, 512, 3, 1, 1), # [512, 8, 8]
             nn.BatchNorm2d(512),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),       # [512, 4, 4]
             nn.Dropout(0.2),
 
             nn.Conv2d(512, 512, 3, 1, 1), # [512, 4, 4]
             nn.BatchNorm2d(512),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),       # [512, 2, 2]
             nn.Dropout(0.2),
 
             nn.Conv2d(512, 512, 3, 1, 1), # [512, 4, 4]
             nn.BatchNorm2d(512),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),       # [512, 1, 1]
             nn.Dropout(0.2),
 
@@ -131,6 +158,13 @@ class Classifier_norm(nn.Module):
             # nn.Linear(1024, 512),
             # #nn.Dropout(0.1),
             # nn.LeakyReLU(0.03),
+            # nn.Linear(512, 256),
+            # nn.Dropout(0.2),
+            # nn.LeakyReLU(0.03),
+            # nn.Linear(256, 128),
+            # nn.Dropout(0.2),
+            # nn.LeakyReLU(0.03),
+            # nn.Linear(128, 11)
             nn.Linear(512,256), #nn.linear(dim of input, dim of output)
             nn.ReLU(),
             nn.Linear(256,128),
