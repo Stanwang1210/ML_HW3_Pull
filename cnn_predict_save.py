@@ -194,7 +194,7 @@ model_best = Classifier().cuda()
 summary(model_best,(3,128,128))
 loss = nn.CrossEntropyLoss() # 因為是 classification task，所以 loss 使用 CrossEntropyLoss
 optimizer = torch.optim.Adam(model_best.parameters(), lr=0.001,weight_decay=0.0005) # optimizer 使用 Adam
-num_epoch = 80
+num_epoch = 100
 
 for epoch in range(num_epoch):
     epoch_start_time = time.time()
