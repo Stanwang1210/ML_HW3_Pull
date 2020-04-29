@@ -254,6 +254,3 @@ print(name + " saved")
 
 
 
-from google.colab import files
-
-files.download(sys.argv[2])
