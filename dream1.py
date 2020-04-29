@@ -28,8 +28,8 @@ class DeepDream():
         # Hook the layers to get result of the convolution
         self.hook_layer()
         # Create the folder to export images if not exists
-        if not os.path.exists('../generated'):
-            os.makedirs('../generated')
+        if not os.path.exists('generated'):
+            os.makedirs('generated')
 
     def hook_layer(self):
         def hook_function(module, grad_in, grad_out):
@@ -84,7 +84,7 @@ if __name__ == '__main__':
     cnn_layer = 34
     filter_pos = 94
 
-    im_path = 'input_images/test.jpeg'
+    im_path = 'food-11/training/2_1055.jpg'
     # Fully connected layer is not needed
     pretrained_model = models.vgg19(pretrained=True).features
     dd = DeepDream(pretrained_model, cnn_layer, filter_pos, im_path)
