@@ -24,7 +24,7 @@ print("std loaded")
 
 class Classifier_no_norm(nn.Module):
     def __init__(self):
-        super(Classifier, self).__init__()
+        super(Classifier_no_norm, self).__init__()
         #torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding)
         #torch.nn.MaxPool2d(kernel_size, stride, padding)
         #input 維度 [3, 128, 128]
@@ -102,7 +102,7 @@ class Classifier_no_norm(nn.Module):
 
 class Classifier_norm(nn.Module):
     def __init__(self):
-        super(Classifier, self).__init__()
+        super(Classifier_norm, self).__init__()
         #torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding)
         #torch.nn.MaxPool2d(kernel_size, stride, padding)
         #input 維度 [3, 128, 128]
