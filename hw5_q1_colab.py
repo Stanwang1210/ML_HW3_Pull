@@ -434,7 +434,7 @@ for key in dictionary.keys():
     img_indices = dictionary[key]
     img_indices = [indice+1 for indice in img_indices]
     images, labels = train_set.getbatch(img_indices)
-    fig, axs = plt.subplots(1, 4, figsize=(15, 8))                                                                                                                                                                 
+    fig, axs = plt.subplots(1, 5, figsize=(15, 8))                                                                                                                                                                 
     np.random.seed(16)                                                                                                                                                       
     # 讓實驗 reproducible
     count = 0
