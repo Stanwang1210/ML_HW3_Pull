@@ -16,10 +16,10 @@ from pdb import set_trace
 
 
 print("Loading mean")
-my_mean = np.load("cnn_structure/pop_mean.npy")
+my_mean = np.load("mean.npy")
 print("mean loaded")
 print("Loading std")
-my_std = np.load("cnn_structure/pop_std0.npy")
+my_std = np.load("std.npy")
 print("std loaded")
 
 class Classifier_no_norm(nn.Module):
