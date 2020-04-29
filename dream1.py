@@ -28,8 +28,8 @@ class DeepDream():
         # Hook the layers to get result of the convolution
         self.hook_layer()
         # Create the folder to export images if not exists
-        if not os.path.exists('/generated'):
-            os.makedirs('/generated')
+        if not os.path.exists('generated'):
+            os.makedirs('generated')
 
     def hook_layer(self):
         def hook_function(module, grad_in, grad_out):
