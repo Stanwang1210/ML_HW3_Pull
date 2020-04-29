@@ -374,7 +374,7 @@ def filter_explaination(x, model, cnnid, filterid, iteration=100, lr=1):
   # 因此事情做完了之後，就把這個 hook 拿掉，下次想要再做事時再 register 就好了。
 
   return filter_activations, filter_visualization
-
+'''
 images, labels = train_set.getbatch(img_indices)
 for id in range(30):
     print(f'This is the {id+1}th filter')
@@ -396,7 +396,7 @@ for id in range(30):
     # plt.show()
     # plt.close()
 # 從下面四張圖可以看到，activate 的區域對應到一些物品的邊界，尤其是顏色對比較深的邊界
-
+'''
 """## Lime
 
 Lime 的部分因為有現成的套件可以使用，因此下方直接 demo 如何使用該套件。其實非常的簡單，只需要 implement 兩個 function 即可。
@@ -437,10 +437,11 @@ for key in dictionary.keys():
     fig, axs = plt.subplots(1, 4, figsize=(15, 8))                                                                                                                                                                 
     np.random.seed(16)                                                                                                                                                       
     # 讓實驗 reproducible
+    count = 0
     for idx, (image, label) in enumerate(zip(images.permute(0, 2, 3, 1).numpy(), labels)):                                                                                                                                             
         x = image.astype(np.double)
         # lime 這個套件要吃 numpy array
-
+        
         explainer = lime_image.LimeImageExplainer()                                                                                                                              
         explaination = explainer.explain_instance(image=x, classifier_fn=predict, segmentation_fn=segmentation, top_labels=11)
         # 基本上只要提供給 lime explainer 兩個關鍵的 function，事情就結束了
@@ -460,8 +461,8 @@ for key in dictionary.keys():
         
         axs[idx].imshow(lime_img)
 
-    plt.show()
-    plt.close()
+    plt.savefig(f'{key}_{count}.png')
+    
 # 從以下前三章圖可以看到，model 有認出食物的位置，並以該位置為主要的判斷依據
 # 唯一例外是第四張圖，看起來 model 似乎比較喜歡直接去認「碗」的形狀，來判斷該圖中屬於 soup 這個 class
 # 至於碗中的內容物被標成紅色，代表「單看碗中」的東西反而有礙辨認。
