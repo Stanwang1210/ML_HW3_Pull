@@ -134,7 +134,7 @@ class Classifier(nn.Module):
         out = out.view(out.size()[0], -1)
         return self.fc(out)
 
-ls
+
 
 model = Classifier().cuda()
 checkpoint = torch.load('model_best.pt')
