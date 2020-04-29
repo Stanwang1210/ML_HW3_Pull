@@ -243,7 +243,7 @@ with torch.no_grad():
         test_label = np.argmax(test_pred.cpu().data.numpy(), axis=1)
         for y in test_label:
             prediction.append(y)
-name = 'CNN_predict_save.csv'
+name = 'CNN_predict_save1.csv'
 #將結果寫入 csv 檔
 with open(name, 'w') as f:
     f.write('Id,Category\n')
