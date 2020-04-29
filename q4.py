@@ -18,7 +18,7 @@ from pdb import set_trace
 import cv2
 import math
 
-from dream import *
+from dream1 import *
 # import dream
 
 sys.path.append('cnn_structure')
