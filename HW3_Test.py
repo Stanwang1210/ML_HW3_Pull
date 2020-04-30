@@ -57,7 +57,7 @@ test_x = readfile(os.path.join(workspace_dir, "testing"), False)
 print("Size of Testing data = {}".format(len(test_x)))
 '''
 workspace_dir = sys.argv[1]
-MODLE_PATH = 'model_best.pt'
+MODLE_PATH = 'model_save1.pt'
 test_x = np.load('test_x.npy')
 
 print("Loading mean")
