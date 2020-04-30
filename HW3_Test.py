@@ -186,7 +186,7 @@ class Classifier(nn.Module):
 
 
 # Train
-
+model_best = Classifier().cuda()
 model_best.load_state_dict(torch.load(MODLE_PATH))
 print("Model(" + MODLE_PATH+ ") loaded")
 
