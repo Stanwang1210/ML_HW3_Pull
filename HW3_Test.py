@@ -57,7 +57,7 @@ test_x = readfile(os.path.join(workspace_dir, "testing"), False)
 print("Size of Testing data = {}".format(len(test_x)))
 '''
 workspace_dir = sys.argv[1]
-MODLE_PATH = 'model_save1.pt'
+MODLE_PATH = 'model_best.pt'
 test_x = np.load('test_x.npy')
 
 print("Loading mean")
@@ -114,43 +114,43 @@ class Classifier(nn.Module):
         self.cnn = nn.Sequential(
             nn.Conv2d(3, 64, 3, 1, 1),  # [64, 128, 128]
             nn.BatchNorm2d(64),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),      # [64, 64, 64]
             nn.Dropout(0.2),
 
             nn.Conv2d(64, 128, 3, 1, 1), # [128, 64, 64]
             nn.BatchNorm2d(128),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),      # [128, 32, 32]
             nn.Dropout(0.2),
 
             nn.Conv2d(128, 256, 3, 1, 1), # [256, 32, 32]
             nn.BatchNorm2d(256),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),      # [256, 16, 16]
             nn.Dropout(0.2),
 
             nn.Conv2d(256, 512, 3, 1, 1), # [512, 16, 16]
             nn.BatchNorm2d(512),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),       # [512, 8, 8]
             nn.Dropout(0.2),
             
             nn.Conv2d(512, 512, 3, 1, 1), # [512, 8, 8]
             nn.BatchNorm2d(512),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),       # [512, 4, 4]
             nn.Dropout(0.2),
 
             nn.Conv2d(512, 512, 3, 1, 1), # [512, 4, 4]
             nn.BatchNorm2d(512),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),       # [512, 2, 2]
             nn.Dropout(0.2),
 
             nn.Conv2d(512, 512, 3, 1, 1), # [512, 4, 4]
             nn.BatchNorm2d(512),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),       # [512, 1, 1]
             nn.Dropout(0.2),
 
@@ -171,7 +171,7 @@ class Classifier(nn.Module):
             # nn.LeakyReLU(0.03),
             # nn.Linear(128, 11)
             nn.Linear(512,256), #nn.linear(dim of input, dim of output)
-            nn.LeakyReLU(0.03),
+            nn.ReLU(),
             nn.Linear(256,128),
             nn.ReLU(),
             nn.Dropout(0.2),
@@ -182,7 +182,6 @@ class Classifier(nn.Module):
         out = self.cnn(x)
         out = out.view(out.size()[0], -1)
         return self.fc(out)
-
 
 
 # Train
