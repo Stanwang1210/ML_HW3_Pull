@@ -300,8 +300,8 @@ for row, target in enumerate([images, saliencies]):
     # - 第 1 個 dimension 為原本 img 的第 2 個 dimension，也就是 width
     # - 第 2 個 dimension 為原本 img 的第 0 個 dimension，也就是 channels
 
-#plt.show()
-# plt.close()
+plt.show()
+plt.close()
 
 """## Filter explaination
 
@@ -374,7 +374,7 @@ def filter_explaination(x, model, cnnid, filterid, iteration=100, lr=1):
   # 因此事情做完了之後，就把這個 hook 拿掉，下次想要再做事時再 register 就好了。
 
   return filter_activations, filter_visualization
-'''
+
 images, labels = train_set.getbatch(img_indices)
 for id in range(30):
     print(f'This is the {id+1}th filter')
@@ -393,10 +393,10 @@ for id in range(30):
       axs[0][i].imshow(img.permute(1, 2, 0))
     for i, img in enumerate(filter_activations):
       axs[1][i].imshow(normalize(img))
-    # plt.show()
-    # plt.close()
+    plt.show()
+    plt.close()
 # 從下面四張圖可以看到，activate 的區域對應到一些物品的邊界，尤其是顏色對比較深的邊界
-'''
+
 """## Lime
 
 Lime 的部分因為有現成的套件可以使用，因此下方直接 demo 如何使用該套件。其實非常的簡單，只需要 implement 兩個 function 即可。
@@ -429,20 +429,48 @@ dictionary = {"Bread":[0, 100, 200, 300, 400],
               "Rice": [7300, 7350, 7400, 7450, 7500],
               "Soup": [8600, 8650, 8700, 8750, 8800]
               }
+'''
+img_indices = [83, 4218, 4707, 8598]
+images, labels = train_set.getbatch(img_indices)
+saliencies = compute_saliency_maps(images, labels, model)
 
+# 使用 matplotlib 畫出來
+fig, axs = plt.subplots(2, len(img_indices), figsize=(26, 14))
+for row, target in enumerate([images, saliencies]):
+  for column, img in enumerate(target):
+    axs[row][column].imshow(img.permute(1, 2, 0).numpy())
+
+    # 小知識：permute 是什麼，為什麼這邊要用?
+    # 在 pytorch 的世界，image tensor 各 dimension 的意義通常為 (channels, height, width)
+    # 但在 matplolib 的世界，想要把一個 tensor 畫出來，形狀必須為 (height, width, channels)
+    # 因此 permute 是一個 pytorch 很方便的工具來做 dimension 間的轉換
+    # 這邊 img.permute(1, 2, 0)，代表轉換後的 tensor，其
+    # - 第 0 個 dimension 為原本 img 的第 1 個 dimension，也就是 height
+    # - 第 1 個 dimension 為原本 img 的第 2 個 dimension，也就是 width
+    # - 第 2 個 dimension 為原本 img 的第 0 個 dimension，也就是 channels
+
+plt.show()
+plt.close()
+'''
 for key in dictionary.keys():                                                                                                                                                                       
     img_indices = dictionary[key]
     img_indices = [indice+1 for indice in img_indices]
     images, labels = train_set.getbatch(img_indices)
-    fig, axs = plt.subplots(1, 5, figsize=(15, 8))
-    plt.savefig(f'{key}.png')
+    fig, axs = plt.subplots(1, len(img_indices), figsize=(15, 8))
+    #plt.imshow(images.permute(0, 2, 3, 1).astype(np.double))
+    #plt.savefig(f'{key}.png')
     np.random.seed(16)                                                                                                                                                       
     # 讓實驗 reproducible
+    #for i in axs:
+    #    axs[i].imshow(images, interpolation='none')
+    #plt.savefig(f'{key}.png')
     
-    for idx, (image, label) in enumerate(zip(images.permute(0, 2, 3, 1).numpy(), labels)):                                                                                                                                             
+    #fig, axs = plt.subplots(1, len(img_indices), figsize=(15, 8))
+    for idx, (image, label) in enumerate(zip(images.permute(0, 2, 3, 1).numpy(), labels)):
+        
         x = image.astype(np.double)
         # lime 這個套件要吃 numpy array
-        
+
         explainer = lime_image.LimeImageExplainer()                                                                                                                              
         explaination = explainer.explain_instance(image=x, classifier_fn=predict, segmentation_fn=segmentation, top_labels=11)
         # 基本上只要提供給 lime explainer 兩個關鍵的 function，事情就結束了
@@ -459,11 +487,12 @@ for key in dictionary.keys():
                                 )
         # 把 explainer 解釋的結果轉成圖片
         # doc: https://lime-ml.readthedocs.io/en/latest/lime.html?highlight=get_image_and_mask#lime.lime_image.ImageExplanation.get_image_and_mask
-        
-        axs[idx].imshow(lime_img)
 
-    plt.savefig(f'{key}_lime.png')
-    
+        axs[idx].imshow(lime_img)
+    plt.show()
+    plt.close()
+   
+
 # 從以下前三章圖可以看到，model 有認出食物的位置，並以該位置為主要的判斷依據
 # 唯一例外是第四張圖，看起來 model 似乎比較喜歡直接去認「碗」的形狀，來判斷該圖中屬於 soup 這個 class
 # 至於碗中的內容物被標成紅色，代表「單看碗中」的東西反而有礙辨認。

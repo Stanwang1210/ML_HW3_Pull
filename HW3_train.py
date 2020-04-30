@@ -8,7 +8,7 @@ Original file is located at
 """
 
 
-# Import需要的套件
+
 from torchsummary import summary
 import os
 import numpy as np
@@ -52,11 +52,10 @@ val_y = np.load("val_y.npy")
 workspace_dir = sys.argv[1]
 MODLE_PATH = "model_params/best_model3.pt"
 print("Reading data")
-
 test_x = readfile(os.path.join(workspace_dir, "testing"), False)
 print("Size of Testing data = {}".format(len(test_x)))
 '''
-
+workspace_dir = sys.argv[1]
 MODLE_PATH = 'model_best.pt'
 test_x = np.load('test_x.npy')
 
@@ -101,10 +100,17 @@ class ImgDataset(Dataset):
         else:
             return X
 
-batch_size = 100#128
+batch_size = 128#128
 
 """# Model"""
 
+
+
+
+train_val_x = np.concatenate((train_x, val_x), axis=0)
+train_val_y = np.concatenate((train_y, val_y), axis=0)
+train_val_set = ImgDataset(train_val_x, train_val_y, train_transform)
+#train_val_loader = DataLoader(train_val_set, batch_size=batch_size, shuffle=True)
 class Classifier(nn.Module):
     def __init__(self):
         super(Classifier, self).__init__()
@@ -114,43 +120,43 @@ class Classifier(nn.Module):
         self.cnn = nn.Sequential(
             nn.Conv2d(3, 64, 3, 1, 1),  # [64, 128, 128]
             nn.BatchNorm2d(64),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),      # [64, 64, 64]
             nn.Dropout(0.2),
 
             nn.Conv2d(64, 128, 3, 1, 1), # [128, 64, 64]
             nn.BatchNorm2d(128),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),      # [128, 32, 32]
             nn.Dropout(0.2),
 
             nn.Conv2d(128, 256, 3, 1, 1), # [256, 32, 32]
             nn.BatchNorm2d(256),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),      # [256, 16, 16]
             nn.Dropout(0.2),
 
             nn.Conv2d(256, 512, 3, 1, 1), # [512, 16, 16]
             nn.BatchNorm2d(512),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),       # [512, 8, 8]
             nn.Dropout(0.2),
             
             nn.Conv2d(512, 512, 3, 1, 1), # [512, 8, 8]
             nn.BatchNorm2d(512),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),       # [512, 4, 4]
             nn.Dropout(0.2),
 
             nn.Conv2d(512, 512, 3, 1, 1), # [512, 4, 4]
             nn.BatchNorm2d(512),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),       # [512, 2, 2]
             nn.Dropout(0.2),
 
             nn.Conv2d(512, 512, 3, 1, 1), # [512, 4, 4]
             nn.BatchNorm2d(512),
-            nn.LeakyReLU(0.03),
+            nn.LeakyReLU(0.04),
             nn.MaxPool2d(2, 2, 0),       # [512, 1, 1]
             nn.Dropout(0.2),
 
@@ -171,7 +177,7 @@ class Classifier(nn.Module):
             # nn.LeakyReLU(0.03),
             # nn.Linear(128, 11)
             nn.Linear(512,256), #nn.linear(dim of input, dim of output)
-            nn.LeakyReLU(0.03),
+            nn.ReLU(),
             nn.Linear(256,128),
             nn.ReLU(),
             nn.Dropout(0.2),
@@ -182,16 +188,10 @@ class Classifier(nn.Module):
         out = self.cnn(x)
         out = out.view(out.size()[0], -1)
         return self.fc(out)
-
-
-train_val_x = np.concatenate((train_x, val_x), axis=0)
-train_val_y = np.concatenate((train_y, val_y), axis=0)
-train_val_set = ImgDataset(train_val_x, train_val_y, train_transform)
-#train_val_loader = DataLoader(train_val_set, batch_size=batch_size, shuffle=True)
-
 train_val_loader = torch.load('train_val_loader.pth')
 # Train
 model_best = Classifier().cuda()
+summary(model_best,(3,128,128))
 loss = nn.CrossEntropyLoss() # 因為是 classification task，所以 loss 使用 CrossEntropyLoss
 optimizer = torch.optim.Adam(model_best.parameters(), lr=0.001,weight_decay=0.0005) # optimizer 使用 Adam
 num_epoch = 100
@@ -222,33 +222,7 @@ for epoch in range(num_epoch):
 print("Saving model...")
 torch.save(model_best.state_dict(), "model_best.pt")
 print("model_best.pt saved")
-model_best = Classifier().cuda()
-print("Loading model...")
-model_best.load_state_dict(torch.load(MODLE_PATH))
-print("Model(" + MODLE_PATH+ ") loaded")
 
-"""# Testing
-利用剛剛 train 好的 model 進行 prediction
-"""
 
-#test_set = ImgDataset(test_x, transform=test_transform)
-#test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False)
-test_loader = torch.load('test_loader.pth')
 
-model_best.eval()
-prediction = []
-with torch.no_grad():
-    for i, data in enumerate(test_loader):
-        test_pred = model_best(data.cuda())
-        test_label = np.argmax(test_pred.cpu().data.numpy(), axis=1)
-        for y in test_label:
-            prediction.append(y)
-sys.argv[2] = 'CNN_predict.csv'
-#將結果寫入 csv 檔
-with open(sys.argv[2], 'w') as f:
-    f.write('Id,Category\n')
-    for i, y in  enumerate(prediction):
-        f.write('{},{}\n'.format(i, y))
-print("Prediction Done")
-print(sys.argv[2] + " saved")
 
