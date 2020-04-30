@@ -56,7 +56,7 @@ print("Reading data")
 test_x = readfile(os.path.join(workspace_dir, "testing"), False)
 print("Size of Testing data = {}".format(len(test_x)))
 '''
-
+workspace_dir = sys.argv[1]
 MODLE_PATH = 'model_best.pt'
 test_x = np.load('test_x.npy')
 
@@ -184,46 +184,9 @@ class Classifier(nn.Module):
         return self.fc(out)
 
 
-train_val_x = np.concatenate((train_x, val_x), axis=0)
-train_val_y = np.concatenate((train_y, val_y), axis=0)
-train_val_set = ImgDataset(train_val_x, train_val_y, train_transform)
-#train_val_loader = DataLoader(train_val_set, batch_size=batch_size, shuffle=True)
 
-train_val_loader = torch.load('train_val_loader.pth')
 # Train
-model_best = Classifier().cuda()
-loss = nn.CrossEntropyLoss() # 因為是 classification task，所以 loss 使用 CrossEntropyLoss
-optimizer = torch.optim.Adam(model_best.parameters(), lr=0.001,weight_decay=0.0005) # optimizer 使用 Adam
-num_epoch = 100
 
-for epoch in range(num_epoch):
-    epoch_start_time = time.time()
-    train_acc = 0.0
-    train_loss = 0.0
-
-    model_best.train()
-    for i, data in enumerate(train_val_loader):
-        optimizer.zero_grad()
-        train_pred = model_best(data[0].cuda())
-        batch_loss = loss(train_pred, data[1].cuda())
-        batch_loss.backward()
-        optimizer.step()
-
-        train_acc += np.sum(np.argmax(train_pred.cpu().data.numpy(), axis=1) == data[1].numpy())
-        train_loss += batch_loss.item()
-
-        #將結果 print 出來
-    print('[%03d/%03d] %2.2f sec(s) Train Acc: %3.6f Loss: %3.6f' % \
-      (epoch + 1, num_epoch, time.time()-epoch_start_time, \
-      train_acc/train_val_set.__len__(), train_loss/train_val_set.__len__()))
-
-
-
-print("Saving model...")
-torch.save(model_best.state_dict(), "model_best.pt")
-print("model_best.pt saved")
-model_best = Classifier().cuda()
-print("Loading model...")
 model_best.load_state_dict(torch.load(MODLE_PATH))
 print("Model(" + MODLE_PATH+ ") loaded")
 
@@ -243,12 +206,12 @@ with torch.no_grad():
         test_label = np.argmax(test_pred.cpu().data.numpy(), axis=1)
         for y in test_label:
             prediction.append(y)
-sys.argv[2] = 'CNN_predict.csv'
+name = sys.argv[2] 
 #將結果寫入 csv 檔
-with open(sys.argv[2], 'w') as f:
+with open(name, 'w') as f:
     f.write('Id,Category\n')
     for i, y in  enumerate(prediction):
         f.write('{},{}\n'.format(i, y))
 print("Prediction Done")
-print(sys.argv[2] + " saved")
+print(name + " saved")
 
