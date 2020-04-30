@@ -462,7 +462,7 @@ for key in dictionary.keys():
     np.random.seed(16)                                                                                                                                                       
     # 讓實驗 reproducible
     for img in images:
-        axs.imshow(img.permute(1, 2, 0).numpy())
+        axs.imshow(img)
     plt.savefig(f'{key}.png')
     
     fig, axs = plt.subplots(1, len(img_indices), figsize=(15, 8))
