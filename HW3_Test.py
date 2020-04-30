@@ -50,7 +50,7 @@ val_y = np.load("val_y.npy")
 #分別將 training set、validation set、testing set 用 readfile 函式讀進來
 '''
 workspace_dir = sys.argv[1]
-MODLE_PATH = "model_params/best_model3.pt"
+MODLE_PATH = "model_best.pt"
 print("Reading data")
 
 test_x = readfile(os.path.join(workspace_dir, "testing"), False)
