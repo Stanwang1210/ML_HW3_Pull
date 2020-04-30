@@ -55,7 +55,7 @@ print("Reading data")
 test_x = readfile(os.path.join(workspace_dir, "testing"), False)
 print("Size of Testing data = {}".format(len(test_x)))
 '''
-
+workspace_dir = sys.argv[1]
 MODLE_PATH = 'model_best.pt'
 test_x = np.load('test_x.npy')
 
@@ -220,37 +220,9 @@ for epoch in range(num_epoch):
 
 
 print("Saving model...")
-torch.save(model_best.state_dict(), "model_Q6.pt")
+torch.save(model_best.state_dict(), "model_best.pt")
 print("model_best.pt saved")
-model_best = Classifier().cuda()
-print("Loading model...")
-model_best.load_state_dict(torch.load(MODLE_PATH))
-print("Model(" + MODLE_PATH+ ") loaded")
 
-"""# Testing
-利用剛剛 train 好的 model 進行 prediction
-"""
-
-#test_set = ImgDataset(test_x, transform=test_transform)
-#test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False)
-test_loader = torch.load('test_loader.pth')
-
-model_best.eval()
-prediction = []
-with torch.no_grad():
-    for i, data in enumerate(test_loader):
-        test_pred = model_best(data.cuda())
-        test_label = np.argmax(test_pred.cpu().data.numpy(), axis=1)
-        for y in test_label:
-            prediction.append(y)
-name = 'CNN_predict_save1.csv'
-#將結果寫入 csv 檔
-with open(name, 'w') as f:
-    f.write('Id,Category\n')
-    for i, y in  enumerate(prediction):
-        f.write('{},{}\n'.format(i, y))
-print("Prediction Done")
-print(name + " saved")
 
 
 
