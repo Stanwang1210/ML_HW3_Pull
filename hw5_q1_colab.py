@@ -461,8 +461,8 @@ for key in dictionary.keys():
     #plt.savefig(f'{key}.png')
     np.random.seed(16)                                                                                                                                                       
     # 讓實驗 reproducible
-    for img in images:
-        axs.imshow(img)
+    for i in axs:
+        axs[i].imshow(images, interpolation='none')
     plt.savefig(f'{key}.png')
     
     fig, axs = plt.subplots(1, len(img_indices), figsize=(15, 8))
