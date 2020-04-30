@@ -456,38 +456,42 @@ for key in dictionary.keys():
     img_indices = dictionary[key]
     img_indices = [indice+1 for indice in img_indices]
     images, labels = train_set.getbatch(img_indices)
-    fig, axs = plt.subplots(2, len(img_indices), figsize=(15, 8))
+    fig, axs = plt.subplots(1, len(img_indices), figsize=(15, 8))
     #plt.imshow(images.permute(0, 2, 3, 1).astype(np.double))
     #plt.savefig(f'{key}.png')
     np.random.seed(16)                                                                                                                                                       
     # 讓實驗 reproducible
+    for idx,img in images:
+        axs[idx].imshow(img.permute(1, 2, 0).numpy())
+    plt.savefig(f'{key}.png')
     
-    for row, (image, label) in enumerate(zip(images.permute(0, 2, 3, 1).numpy(), labels)):
-        for col, target in (image, label):
-            x = target.astype(np.double)
-            # lime 這個套件要吃 numpy array
+    fig, axs = plt.subplots(1, len(img_indices), figsize=(15, 8))
+    for idx, (image, label) in enumerate(zip(images.permute(0, 2, 3, 1).numpy(), labels)):
+        
+        x = image.astype(np.double)
+        # lime 這個套件要吃 numpy array
 
-            explainer = lime_image.LimeImageExplainer()                                                                                                                              
-            explaination = explainer.explain_instance(image=x, classifier_fn=predict, segmentation_fn=segmentation, top_labels=11)
-            # 基本上只要提供給 lime explainer 兩個關鍵的 function，事情就結束了
-            # classifier_fn 定義圖片如何經過 model 得到 prediction
-            # segmentation_fn 定義如何把圖片做 segmentation
-            # doc: https://lime-ml.readthedocs.io/en/latest/lime.html?highlight=explain_instance#lime.lime_image.LimeImageExplainer.explain_instance
+        explainer = lime_image.LimeImageExplainer()                                                                                                                              
+        explaination = explainer.explain_instance(image=x, classifier_fn=predict, segmentation_fn=segmentation, top_labels=11)
+        # 基本上只要提供給 lime explainer 兩個關鍵的 function，事情就結束了
+        # classifier_fn 定義圖片如何經過 model 得到 prediction
+        # segmentation_fn 定義如何把圖片做 segmentation
+        # doc: https://lime-ml.readthedocs.io/en/latest/lime.html?highlight=explain_instance#lime.lime_image.LimeImageExplainer.explain_instance
 
-            lime_img, mask = explaination.get_image_and_mask(                                                                                                                         
-                                        label=label.item(),                                                                                                                           
-                                        positive_only=False,                                                                                                                         
-                                        hide_rest=False,                                                                                                                             
-                                        num_features=11,                                                                                                                              
-                                        min_weight=0.05                                                                                                                              
-                                    )
-            # 把 explainer 解釋的結果轉成圖片
-            # doc: https://lime-ml.readthedocs.io/en/latest/lime.html?highlight=get_image_and_mask#lime.lime_image.ImageExplanation.get_image_and_mask
+        lime_img, mask = explaination.get_image_and_mask(                                                                                                                         
+                                    label=label.item(),                                                                                                                           
+                                    positive_only=False,                                                                                                                         
+                                    hide_rest=False,                                                                                                                             
+                                    num_features=11,                                                                                                                              
+                                    min_weight=0.05                                                                                                                              
+                                )
+        # 把 explainer 解釋的結果轉成圖片
+        # doc: https://lime-ml.readthedocs.io/en/latest/lime.html?highlight=get_image_and_mask#lime.lime_image.ImageExplanation.get_image_and_mask
 
-            axs[row][col].imshow(lime_img)
+        axs[idx].imshow(lime_img)
 
-        plt.savefig(f'{key}_lime.png')
-    
+    plt.savefig(f'{key}_lime.png')
+
 # 從以下前三章圖可以看到，model 有認出食物的位置，並以該位置為主要的判斷依據
 # 唯一例外是第四張圖，看起來 model 似乎比較喜歡直接去認「碗」的形狀，來判斷該圖中屬於 soup 這個 class
 # 至於碗中的內容物被標成紅色，代表「單看碗中」的東西反而有礙辨認。
